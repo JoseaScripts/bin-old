@@ -8,7 +8,7 @@
 # Sin embargo la primera vez que se ejecuta desde kodi.sh tiene que cargarlo
 # La segunda vez, cuando lanza la orden 'ediplug OFF' no lo carga.
 if [ -z "$CONFIGURACION" ]; then
-  datos=".pi.conf";
+  datos="$HOME/.pi.conf";
   [[ -f $datos ]] && . $datos
   printf "Configuración: .pi.conf\n";
 else
@@ -21,14 +21,15 @@ fi
 # $1 = ON/OFF
 
 ## VARIABLES Y CONSTANTES ##
-# No declaro esta constante porque me da un error luego al obtener el estado del enchufe en kodioff
-declare -r TEXTO="Estado EDIMAX:";
+# Como cargo 2 veces el programa desde kodi.sh, si es una constante salta un mensaje de error por
+# intentar darle un nuevo valor la segunda vez que se ejecuta.
+TEXTO="Estado EDIMAX:";
 
 ## CÓDIGO ##
 ## -------------------------------------------------------------------------------------------------------------------
 [[ -z $1 ]] && OPCION="-g" || OPCION="-s $1"
-GO=`python ~/python/ediplug-py/src/ediplug/smartplug.py -H $EDIPLUG_IP -l $EDIPLUG_USUARIO -p $EDIPLUG_CLAVE $OPCION`
+GO=`python ~/python/ediplug-py/src/ediplug/smartplug.py -H $EDIPLUG_IP -l $EDIPLUG_USUARIO -p $CLAVE_EDIPLUG $OPCION`
 
 # $GO solo tiene valor cuando se hace una consulta del estado '-g'
-[[ ! -z $1 ]] && printf "$TEXTO $1\n" && echo $1 > $EDIPLUG_ESTADO
-[[ ! -z $GO ]] && printf "$TEXTO $GO\n" && echo $GO > $EDIPLUG_ESTADO
+[[ ! -z $1 ]]  && printf "$TEXTO $1\n"  && echo $1  > $LOG_EDIPLUG
+[[ ! -z $GO ]] && printf "$TEXTO $GO\n" && echo $GO > $LOG_EDIPLUG

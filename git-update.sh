@@ -15,19 +15,24 @@
 
 ## EJEMPLO ##
 # git-update.sh "v1.2" "version2"
+# Ahora, para evitar errores directamente actualiza la RAMA -> Extensa
 
-# dir="$(PWD)";
-# cd /home/pi/bin;
+excluir="bin.config privado privado.json"
+dir="$(PWD)";
+cd $HOME/bin;
 
 for f in $(ls);
 do
   git add $f;
   printf "$f\n";
 done;
-# git add --all
-# git add .
-git commit -m "$1"
-# git rm bin.config
-git push -u https://JoseaScripts@github.com/JoseaScripts/bin "$2"
 
-# cd $dir
+for f in $excluir;
+do
+  git rm $f;
+done;
+
+git commit -m "$1"
+git push -u https://JoseaScripts@github.com/JoseaScripts/bin "Extensa"
+
+cd $dir

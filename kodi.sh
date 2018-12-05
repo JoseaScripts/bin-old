@@ -1,3 +1,5 @@
+
+
 #!/bin/bash
 # ~/bin/kodi.sh
 # Creado el 03/12/2018
@@ -25,8 +27,8 @@
 
 # ~/bin/ediplug
 #. ~/.pi.conf
-cd ~
-datos=".pi.conf"
+# cd ~
+datos="$HOME/.pi.conf"
 if [ -f "$datos" ]; then
   . $datos
   printf "Configuración: $datos\n";
@@ -42,9 +44,9 @@ i=0;
 # Espera después de 'poweroff'
 declare -r TIEMPO_POWEROFF=35;
 # Número de intentos de ping
-declare -r NUM_PINGS=6;
+declare -r NUM_PINGS=10;
 # tiempo de espera entre comprobaciones
-declare -r TIEMPO_ESPERA=5;
+declare -r TIEMPO_ESPERA=1;
 # EDIPLUG_STATUS
 declare -r EDIMAX="$(cat $EDIPLUG_ESTADO)";
 ## ---------------------------------------------------------------------------------------------------------------------
@@ -52,44 +54,30 @@ declare -r EDIMAX="$(cat $EDIPLUG_ESTADO)";
 ## TEXTOS ##
 ## ---------------------------------------------------------------------------------------------------------------------
 declare -r TXT_EDIMAX_ESTADO="EDIMAX $EDIMAX";
-declare -r TXT_EDIMAX_OFF="$HOY_LOG: $TXT_EDIMAX_ESTADO\t KODI apagado.\tNo continúo con el programa";
-declare -r TXT_PING_OFF="$HOY_LOG: $TXT_EDIMAX_ESTADO\t PING perdido.";
-declare -r TXT_CONEXION_ON="$HOY_LOG: $TXT_EDIMAX_ESTADO\t KODI encendido.\t No continúo con el programa";
-declare -r TXT_KODI_OFF="$HOY_LOG: $TXT_EDIMAX_ESTADO\t KODI sin respuesta.\t Apagando EDIMAX.";
-declare -r TXT_OUT="$HOY_LOG\t Orden de apagado enviada a RPI2_MEDIA.\t\n"
+declare -r TXT_EDIMAX_OFF="$HOY_LOG: $TXT_EDIMAX_ESTADO\t KODI OFF\tEXIT";
+declare -r TXT_PING_OFF="$HOY_LOG: $TXT_EDIMAX_ESTADO\tKODI OFF";
+declare -r TXT_CONEXION_ON="$HOY_LOG: $TXT_EDIMAX_ESTADO\tKODI: ON\tEXIT";
+declare -r TXT_KODI_OFF="$HOY_LOG: $TXT_EDIMAX_ESTADO\tKODI OF\tEDIMAX-> OFF";
+declare -r TXT_OUT="$HOY_LOG\t"
 ## --------------------------------------------------------------------------------------------------------------------------
 
 ## CÓDIGO ##
-
 ## APAGAR SERVIDOR MULTIMEDIA ##
-## --------------------------------------------------------------------------------------------------------------------
-# Código original
-# OUT=`ssh pi@$RPI2_MEDIA_IP "sudo poweroff"`;
-# wait $!;
-# printf "$HOY_LOG: Orden de apagado enviada a RPI2_MEDIA at $RPI2_MEDIA_IP\n\t$OUT\n" | tee -a $LOG_KODISLEEP
-## ---------------------------------------------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------------------------------------------------------------
 if [ "$1" == "-r" ] || [ "$1" == "-h" ]; then
 printf "$TXT_OUT" | tee -a $LOG_KODISLEEP
 ssh pi@$RPI2_MEDIA_IP "sudo shutdown $1 $2" &>> $LOG_KODISLEEP
-# sleep $TIEMPO_POWEROFF;
-sleep 5;
+sleep $TIEMPO_POWEROFF;
+printf "\n";	# evita que quede el prompt al lado del último stdout
 exit 0;
 fi
 ## ---------------------------------------------------------------------------------------------------------------------
 
 ## COMPROBANDO CONEXIÓN CON EDIPLUG ##
-## --------------------------------------------------------------------------------------------------------------------
-# Este código podría funcionar si la salida no tuviera texto incorporado:
-# [[ "$(ediplug.sh)" == "OFF" ]] && exit 0;
-# Puedo llamar al script sin el punto pero en no se exporta la configuración y tengo que cargarla en 'ediplug.sh'
-# ediplug
-# Si lo llamo con el punto '. ediplug.sh' se exporta la configuración ya cargada en este script
-
+## ---------------------------------------------------------------------------------------------------------------------------------------------------
+# No lo puedo cargar sin el . delante porque entonces no tiene disponible en ediplug.sh la configuración cargada en kodi.sh
 . ediplug.sh
-wait $!;
-
-# Compruego el estado del enchufe con el registro 'logs/EDIPLUG_STATUS'
-# En caso de estar apagado imprimo el registro y salgo del programa
+wait $!
 [[ $(cat $EDIPLUG_ESTADO) == "OFF" ]] && printf "$TXT_EDIMAX_OFF\n" | tee -a $LOG_KODIOFF && exit 0;
 ## ---------------------------------------------------------------------------------------------------------------------
 
@@ -107,14 +95,6 @@ done
 printf "$TXT_KODI_OFF\n" | tee -a "$LOG_KODIOFF";
 
 ## APAGO EL ENCHUFE ##
-# ediplug.sh OFF;		# funciona desde la terminal, pero no funciona desde el crontab
-# OUT="$(ediplug.sh OFF)";	# funciona desde la terminal, pero no funciona desde el cron
-# ediplug.sh "OFF";	# funciona desde la terminal, pero no funciona desde el cron
-# OUT=`ediplug.sh OFF`;	# funciona desde la terminal, pero no funciona desde el crontab
-
-# Ahora, con el punto delante si funciona
-# El problema es que me cargaba dos veces la configuración y me aparecían mensajes de error
-# por intentar modificar las constantes del archivo de configuración al llamarlo de nuevo.
-# Lo arreglé con un if en 'bin/ediplug.sh'
-# Ahora lo que carga por duplicado son las constantes de 'ediplug.sh' -> "$TXT_OUT"
 . ediplug.sh OFF
+#python ~/python/ediplug-py/src/ediplug/smartplug.py -H $EDIPLUG_IP -l $EDIPLUG_USUARIO -p $CLAVE_EDIPLUG -s OFF
+#printf "$TEXTO $GO\n" | tee -a $LOG_EDIPLUG
