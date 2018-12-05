@@ -21,8 +21,12 @@ excluir="bin.config privado privado.json"
 dir="$(PWD)";
 cd $HOME/bin;
 
-git add --all
-git add .
+for f in $(ls);
+do
+  git add $f;
+  printf "$f\n";
+done;
+
 for f in $excluir;
 do
   git rm $f;
