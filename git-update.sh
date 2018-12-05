@@ -20,9 +20,9 @@ dir="$(PWD)";
 cd /home/pi/bin
 
 git add --all
-git add .
+#git add .
 git commit -m "$1"
-git rm router.sh
-git push -u https://github.com/RpiScripts/bin "$2"
+git rm bin.config
+git push -u https://github.com/JoseaScripts/bin "$2"
 
 cd $dir
