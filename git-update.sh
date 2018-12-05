@@ -16,13 +16,18 @@
 ## EJEMPLO ##
 # git-update.sh "v1.2" "version2"
 
-dir="$(PWD)";
-cd /home/pi/bin
+# dir="$(PWD)";
+# cd /home/pi/bin;
 
-git add --all
-#git add .
+for f in $(ls);
+do
+  git add $f;
+  printf "$f\n";
+done;
+# git add --all
+# git add .
 git commit -m "$1"
-git rm bin.config
-git push -u https://github.com/JoseaScripts/bin "$2"
+# git rm bin.config
+git push -u https://JoseaScripts@github.com/JoseaScripts/bin "$2"
 
-cd $dir
+# cd $dir
