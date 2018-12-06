@@ -18,7 +18,7 @@
 # Ahora, para evitar errores directamente actualiza la RAMA -> Extensa
 
 excluir="bin.config privado privado.json"
-dir="$(PWD)";
+
 cd $HOME/bin;
 
 git add --all
@@ -26,9 +26,8 @@ git add .
 for f in "$excluir";
 do
   git rm $f;
+  printf "$f\n";
 done;
 
 git commit -m "$1"
 git push -u https://JoseaScripts@github.com/JoseaScripts/bin "Extensa"
-
-cd $dir
