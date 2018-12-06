@@ -17,7 +17,7 @@
 # git-update.sh "v1.2" "version2"
 # Ahora, para evitar errores directamente actualiza la RAMA -> Extensa
 
-excluir=".config .nuevo .privado .privado.json privado.sh bin.config privado.sh"
+excluir="privado .privado.sh"
 
 cd $HOME/bin;
 
