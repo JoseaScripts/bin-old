@@ -23,7 +23,7 @@ cd $HOME/bin;
 
 git add --all
 git add .
-for f in $excluir;
+for f in "$excluir";
 do
   git rm $f;
 done;
