@@ -17,9 +17,7 @@
 # git-update.sh "v1.2" "version2"
 # Ahora, para evitar errores directamente actualiza la RAMA -> Extensa
 
-excluir="bin.config privado privado.json"
-dir="$(PWD)";
-cd $HOME/bin;
+[ "$!"=="bin" ] && cd $HOME/bin;
 
 for f in $(ls);
 do
@@ -27,12 +25,6 @@ do
   printf "$f\n";
 done;
 
-for f in $excluir;
-do
-  git rm $f;
-done;
-
-git commit -m "$1"
+git commit -m "$2"
 git push -u https://JoseaScripts@github.com/JoseaScripts/bin "Extensa"
 
-cd $dir
