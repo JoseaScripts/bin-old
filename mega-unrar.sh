@@ -54,7 +54,7 @@ fi
 # export unrarDir="/media/descargas/samba/mega/";
 # Archivos a descomprimir
 # export rarFiles="/media/descargas/mega";
-# export rarFiles="/media/descargas/mega/josea/*.rar";
+#export rarFiles="/media/descargas/mega/josea/*.rar";
 # Ruta a descargas
 # export rarUrl="/media/descargas/mega";
 # Clave para descomprimir archivos

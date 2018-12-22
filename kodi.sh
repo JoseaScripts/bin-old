@@ -117,4 +117,12 @@ printf "$TXT_KODI_OFF\n" | tee -a "$LOG_KODIOFF";
 # por intentar modificar las constantes del archivo de configuración al llamarlo de nuevo.
 # Lo arreglé con un if en 'bin/ediplug.sh'
 # Ahora lo que carga por duplicado son las constantes de 'ediplug.sh' -> "$TXT_OUT"
-. ediplug.sh OFF
+#. ediplug.sh OFF
+# Exportando el valof 'OFF' para apagar ediplug, tampoco funciona desde el crontab, aunque si directamente de la terminal
+# export VAR_ACCION="OFF"
+# . ediplug.sh
+# Tampoco funciona con eval
+# GO="ediplug.py OFF"
+# eval $GO
+python ~/python/ediplug-py/src/ediplug/smartplug.py -H $EDIPLUG_IP -l $EDIPLUG_USUARIO -p $EDIPLUG_CLAVE -s OFF
+printf OFF > $EDIPLUG_ESTADO;
