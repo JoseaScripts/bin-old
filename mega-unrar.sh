@@ -49,21 +49,11 @@ fi
 ## VARIABLES O CONSTANTES
 . ~/bin/mega-unrar.conf
 ## VARIABLES O CONSTANTES
-# export megasync0="megasync0";
-# Este es el directorio donde quiero descomprimir los archivos descargados
-# export unrarDir="/media/descargas/samba/mega/";
-# Archivos a descomprimir
-# export rarFiles="/media/descargas/mega";
-#export rarFiles="/media/descargas/mega/josea/*.rar";
-# Ruta a descargas
-# export rarUrl="/media/descargas/mega";
-# Clave para descomprimir archivos
-# export rarClave="www.mega-estrenos.com";
+# Fecha
+HOY_LOG=$(date +%F_%H%M%S)
+#declare -r HOY_LOG=$(date +%F_%H:%M:%S);
 
-#Carpetas de descarga
-# unrarDirs="josea fatima Marcos";
-
-
+printf "$HOY_LOG\n";
 mega-sync 0 | tee $megasync0;
 wait $!;
 
@@ -73,7 +63,7 @@ while read line; do
       echo "Sincronización con servidor MEGA finalizada.\n";
       for carpeta in $unrarDirs; do
       printf "Buscando archivos 'rar' en $carpeta\n";
-      mega-unrardir.sh $carpeta;
+      . $HOME/bin/mega-unrardir.sh $carpeta;
       done
       wait $!;
       rm $megasync0;

@@ -1,0 +1,12 @@
+To: ENCAPY@gmail.com
+From: $USUARIO_GMAIL@gmail.com
+Subject: Prueba de correo
+
+El paquete ssmtp ha sido instalado con éxito.
+## PENDIENTE ##
+Generar el archivo txt desde un script que pide cada campo como parámetros.
+# Destinatario:
+# Remitente
+# Asunto
+# Mensaje
+# *Adjunto
