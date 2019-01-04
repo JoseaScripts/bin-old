@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # /home/pi/bin/git-update.sh
 # release v1.0
 
