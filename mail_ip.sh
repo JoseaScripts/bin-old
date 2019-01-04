@@ -2,14 +2,14 @@
 
 ip=`cat /home/pi/logs/IP_LOG`;
 
-echo "To: ENCAPY@gmail.com
+echo "To: josea.parana@gmail.com
 From: servidor@gmail.com
-Subject: Prueba de correo\n
+Subject: Direcciones IP de rpi2-servidor
 
-transmision:	http://$ip:9091
-motionEye	http://$ip:80
-servidor:	pi@$ip:2022"> test.txt
+torrents: http://$ip:9091
+camara:	  http://$ip:80
+ssh: 	  pi@$ip:2022"> $HOME/mail.txt
 
 wait $!
 
-cat $HOME/test.txt | sendmail grupoeuroga@gmail.com
+cat $HOME/mail.txt | /usr/sbin/sendmail grupoeuroga@gmail.com

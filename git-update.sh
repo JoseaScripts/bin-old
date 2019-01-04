@@ -1,6 +1,6 @@
 #!/bin/sh
 # /home/pi/bin/git-update.sh
-# v1.6
+# release v1.0
 
 ## FUNCION ##
 # Pasando como parámetro el texto para el commit actualiza el repositorio actual
@@ -16,8 +16,21 @@
 ## EJEMPLO ##
 # git-update.sh "v1.2" "version2"
 
-# dir="$(PWD)";
-# cd /home/pi/bin;
+# INCLUDES
+if [[ -z $USUARIOS ]]; then
+  printf "$USUARIOS";
+  usuarios_conf="$HOME/bin/.usuarios.conf";
+  [[ -f $usuarios_conf ]] && . $usuarios_conf
+  printf "Include: $usuarios_conf\n";
+fi
+if [[ -z $CLAVES ]]; then
+  printf "$CLAVES";
+  claves_conf="$HOME/bin/.claves.conf";
+  [[ -f $claves_conf ]] && . $claves_conf
+  printf "Include: $claves_conf\n";
+fi
+
+cd $HOME/bin;
 
 for f in $(ls);
 do
@@ -28,6 +41,4 @@ done;
 # git add .
 git commit -m "$1"
 # git rm bin.config
-git push -u https://JoseaScripts@github.com/JoseaScripts/bin "$2"
-
-# cd $dir
+git push -u https://$USUARIO_GIT:$CLAVE_GIT@github.com/JoseaScripts/bin "$2"

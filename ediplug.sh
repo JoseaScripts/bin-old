@@ -1,29 +1,34 @@
 #!/bin/bash
-# ~/bin/ediplug
+# ~/bin/ediplug.sh
 # Creado 01 Dic. 2018
-# v1.3
+# release v1.0
 
 ## INCLUDES ##
-# Evita incluir dos veces el script de configuración.
-# Sin embargo la primera vez que se ejecuta desde kodi.sh tiene que cargarlo
-# La segunda vez, cuando lanza la orden 'ediplug OFF' no lo carga.
+# Evita incluir dos veces los scripts de configuración.
 if [[ -z $CONFIGURACION ]]; then
   printf "$CONFIGURACION";
-  datos=".pi.conf";
-  [[ -f $datos ]] && . $datos
-  printf "Configuración: .pi.conf\n";
-else
-  printf "Include: $CONFIGURACION\n"
+  bin_conf="$HOME/bin/bin.conf";
+  [[ -f $bin_conf ]] && . $bin_conf
+  printf "Include: $bin_conf\n";
 fi
-
-#. ~/.pi.conf
+if [[ -z $USUARIOS ]]; then
+  printf "$USUARIOS";
+  usuarios_conf="$HOME/bin/.usuarios.conf";
+  [[ -f $usuarios_conf ]] && . $usuarios_conf
+  printf "Include: $usuarios_conf\n";
+fi
+if [[ -z $CLAVES ]]; then
+  printf "$CLAVES";
+  claves_conf="$HOME/bin/.claves.conf";
+  [[ -f $claves_conf ]] && . $claves_conf
+  printf "Include: $claves_conf\n";
+fi
 
 ## PARÁMETROS ##
 # $1 = ON/OFF
 
 ## VARIABLES Y CONSTANTES ##
-# No declaro esta constante porque me da un error luego al obtener el estado del enchufe en kodioff
-# declare -r TEXTO="Estado EDIMAX:";
+# Se carga 2 veces desde kodi.sh por lo que no puede ser una constante
 TEXTO="Estado EDIMAX:";
 
 ## CÓDIGO ##
@@ -31,16 +36,16 @@ TEXTO="Estado EDIMAX:";
 if [ $1 ]; then
   OPCION="-s $1";
   printf "$TEXTO $1\n";
-  echo $1 > $EDIPLUG_ESTADO;
+  echo $1 > $LOG_EDIPLUG_ESTADO;
 elif [ $VAR_ACCION ]; then
   OPCION="-s $VAR_ACCION";
   printf "$TEXTO accion=$VAR_ACCION\n";
-  echo $VAR_ACCION > $EDIPLUG_ESTADO;
+  echo $VAR_ACCION > $LOG_EDIPLUG_ESTADO;
 else
   OPCION="-g";
 fi
 
-GO=`python ~/python/ediplug-py/src/ediplug/smartplug.py -H $EDIPLUG_IP -l $EDIPLUG_USUARIO -p $EDIPLUG_CLAVE $OPCION`
+GO=`python ~/python/ediplug-py/src/ediplug/smartplug.py -H $IP_EDIPLUG -l $USUARIO_EDIPLUG -p $CLAVE_EDIPLUG $OPCION`
 
 # $GO solo tiene valor cuando se hace una consulta del estado '-g'
-[[ ! -z $GO ]] && printf "$TEXTO $GO\n" && echo $GO > $EDIPLUG_ESTADO
+[[ ! -z $GO ]] && printf "$TEXTO $GO\n" && echo $GO > $LOG_EDIPLUG_ESTADO

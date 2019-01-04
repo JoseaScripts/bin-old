@@ -1,7 +1,7 @@
 #!/bin/bash
 # ~/bin/kodi.sh
 # Creado el 03/12/2018
-# v2.0
+# release v1.0
 
 ## FUNCIONES ##
 # Apagar el enchufe EDIPLUG cuando falla un ping a la IP del reproductor KODI
@@ -23,16 +23,15 @@
 # INCLUDES ##
 # Si ejecuto como sudo el archivo lo busca en /root/archivo, por lo que no lo encuentra
 
-# ~/bin/ediplug
-#. ~/.pi.conf
-cd ~
-datos=".pi.conf"
-if [ -f "$datos" ]; then
-  . $datos
-  printf "Configuración: $datos\n";
+## INCLUDES ##
+# Evita incluir dos veces los scripts de configuración.
+if [[ -z $CONFIGURACION ]]; then
+  printf "$CONFIGURACION";
+  bin_conf="$HOME/bin/bin.conf";
+  [[ -f $bin_conf ]] && . $bin_conf
+  printf "Include: $bin_conf\n";
 else
-  printf "Configuración: No disponible\n"
-  exit 0
+  printf "Include cargado anteriormente: $bin_conf\n"
 fi
 
 ## VARIABLES Y CONSTANTES ##
@@ -46,7 +45,7 @@ declare -r NUM_PINGS=6;
 # tiempo de espera entre comprobaciones
 declare -r TIEMPO_ESPERA=5;
 # EDIPLUG_STATUS
-declare -r EDIMAX="$(cat $EDIPLUG_ESTADO)";
+declare -r EDIMAX="$(cat $LOG_EDIPLUG_ESTADO)";
 ## ---------------------------------------------------------------------------------------------------------------------
 
 ## TEXTOS ##
@@ -66,11 +65,11 @@ declare -r TXT_OUT="$HOY_LOG\t Orden de apagado enviada a RPI2_MEDIA.\t\n"
 # Código original
 # OUT=`ssh pi@$RPI2_MEDIA_IP "sudo poweroff"`;
 # wait $!;
-# printf "$HOY_LOG: Orden de apagado enviada a RPI2_MEDIA at $RPI2_MEDIA_IP\n\t$OUT\n" | tee -a $LOG_KODISLEEP
+# printf "$HOY_LOG: Orden de apagado enviada a RPI2_MEDIA at $IP_RPI2_MEDIA\n\t$OUT\n" | tee -a $LOG_KODISLEEP
 ## ---------------------------------------------------------------------------------------------------------------------
 if [ "$1" == "-r" ] || [ "$1" == "-h" ]; then
 printf "$TXT_OUT" | tee -a $LOG_KODISLEEP
-ssh pi@$RPI2_MEDIA_IP "sudo shutdown $1 $2" &>> $LOG_KODISLEEP
+ssh pi@$IP_RPI2_MEDIA "sudo shutdown $1 $2" &>> $LOG_KODISLEEP
 # sleep $TIEMPO_POWEROFF;
 sleep 5;
 exit 0;
@@ -90,7 +89,7 @@ wait $!;
 
 # Compruego el estado del enchufe con el registro 'logs/EDIPLUG_STATUS'
 # En caso de estar apagado imprimo el registro y salgo del programa
-[[ $(cat $EDIPLUG_ESTADO) == "OFF" ]] && printf "$TXT_EDIMAX_OFF\n" | tee -a $LOG_KODIOFF && exit 0;
+[[ $(cat $LOG_EDIPLUG_ESTADO) == "OFF" ]] && printf "$TXT_EDIMAX_OFF\n" | tee -a $LOG_KODIOFF && exit 0;
 ## ---------------------------------------------------------------------------------------------------------------------
 
 ## COMPROBANDO CONEXIÓN DE KODI ##
@@ -98,7 +97,7 @@ wait $!;
 while [ $i -lt $NUM_PINGS ]; do
     # En caso de no poder conectar con kodi apago el enchufe de la rpi y de los discos duros externos
     sleep $TIEMPO_ESPERA;
-    ping -c 1 $RPI2_MEDIA_IP >> /dev/null && printf "$TXT_CONEXION_ON\n" | tee -a "$LOG_KODIOFF" && exit 0 || printf "$TXT_PING_OFF\n"
+    ping -c 1 $IP_RPI2_MEDIA >> /dev/null && printf "$TXT_CONEXION_ON\n" | tee -a "$LOG_KODIOFF" && exit 0 || printf "$TXT_PING_OFF\n"
     i=$[$i+1];
 done
 

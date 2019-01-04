@@ -48,12 +48,13 @@ fi
 
 ## VARIABLES O CONSTANTES
 . ~/bin/mega-unrar.conf
+
 ## VARIABLES O CONSTANTES
 # Fecha
 HOY_LOG=$(date +%F_%H%M%S)
 #declare -r HOY_LOG=$(date +%F_%H:%M:%S);
 
-printf "$HOY_LOG\n";
+printf "TAREA INICIADA HOY: $HOY_LOG\n";
 mega-sync 0 | tee $megasync0;
 wait $!;
 
@@ -61,10 +62,7 @@ while read line; do
   for word in $line; do
     if [ "$word" = "Synced" ]; then
       echo "Sincronización con servidor MEGA finalizada.\n";
-      for carpeta in $unrarDirs; do
-      printf "Buscando archivos 'rar' en $carpeta\n";
-      . $HOME/bin/mega-unrardir.sh $carpeta;
-      done
+      . ~/bin/mega-unrarlist.sh
       wait $!;
       rm $megasync0;
       sudo chmod -R 777 $unrarDir;
