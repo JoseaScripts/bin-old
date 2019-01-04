@@ -30,6 +30,9 @@ if [[ -z $CLAVES ]]; then
   printf "Include: $claves_conf\n";
 fi
 
+printf "USUARIO_GIT: $USUARIO_GIT\n
+CLAVE_GIT: $CLAVE_GIT\n";
+
 cd $HOME/bin;
 
 for f in $(ls);
