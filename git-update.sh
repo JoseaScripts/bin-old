@@ -16,7 +16,14 @@
 ## EJEMPLO ##
 # git-update.sh "v1.2" "version2"
 
-# INCLUDES
+## INCLUDES ##
+# Evita incluir dos veces los scripts de configuración.
+if [[ -z $CONFIGURACION ]]; then
+  printf "$CONFIGURACION";
+  bin_conf="$HOME/bin/bin.conf";
+  [[ -f $bin_conf ]] && . $bin_conf
+  printf "Include: $bin_conf\n";
+fi
 if [[ -z $USUARIOS ]]; then
   printf "$USUARIOS";
   usuarios_conf="$HOME/bin/.usuarios.conf";
@@ -29,6 +36,7 @@ if [[ -z $CLAVES ]]; then
   [[ -f $claves_conf ]] && . $claves_conf
   printf "Include: $claves_conf\n";
 fi
+
 
 printf "
 USUARIO_GIT: $USUARIO_GIT
