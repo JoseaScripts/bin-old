@@ -30,8 +30,10 @@ if [[ -z $CLAVES ]]; then
   printf "Include: $claves_conf\n";
 fi
 
-printf "USUARIO_GIT: $USUARIO_GIT\n
-CLAVE_GIT: $CLAVE_GIT\n";
+printf "
+USUARIO_GIT: $USUARIO_GIT
+CLAVE_GIT: $CLAVE_GIT
+";
 
 cd $HOME/bin;
 
