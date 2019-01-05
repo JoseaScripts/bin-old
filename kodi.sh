@@ -5,15 +5,13 @@
 
 ## FUNCIONES ##
 # Apagar el enchufe EDIPLUG cuando falla un ping a la IP del reproductor KODI
-# Toma los datos privados del archivo .pi.conf
+# Toma los datos privados de los archivos bin/.usuarios.conf y bin/.claves.conf
 # Mantiene un registro del estado del enchufe y del servidor multimedia (Raspberry)
 
 ## NOVEDADES ##
 # He decidido finalmente que todos mis scripts bash finalicen en '.sh' para reconocerlos más facilmente
 
 ## MEJORAS PENDIENTES ##
-# Simplificar la comprobación del estado del enchufe guardando la salida de 'ediplug.sh'
-# Aparece un error al cargar por segunda vez el script 'ediplug.sh' ya que carga dos veces el texto
 # Poder enviar un 'kodi.sh ON' y actuar según se reciba PING y según el estado de 'EDIMAX'
 
 ## LOG ##
@@ -21,17 +19,12 @@
 # El archivo de registro cambia con el número de semana y año en un carpeta independiente dentro de ~/logs/
 
 # INCLUDES ##
-# Si ejecuto como sudo el archivo lo busca en /root/archivo, por lo que no lo encuentra
-
-## INCLUDES ##
 # Evita incluir dos veces los scripts de configuración.
 if [[ -z $CONFIGURACION ]]; then
   printf "$CONFIGURACION";
-  bin_conf="$HOME/bin/bin.conf";
-  [[ -f $bin_conf ]] && . $bin_conf
-  printf "Include: $bin_conf\n";
-else
-  printf "Include cargado anteriormente: $bin_conf\n"
+  config="$HOME/bin/config";
+  [[ -f $config ]] && . $config
+  printf "Include: $config\n";
 fi
 
 ## VARIABLES Y CONSTANTES ##
@@ -41,9 +34,9 @@ i=0;
 # Espera después de 'poweroff'
 declare -r TIEMPO_POWEROFF=35;
 # Número de intentos de ping
-declare -r NUM_PINGS=6;
+declare -r NUM_PINGS=10;
 # tiempo de espera entre comprobaciones
-declare -r TIEMPO_ESPERA=5;
+declare -r TIEMPO_ESPERA=0.2;
 # EDIPLUG_STATUS
 declare -r EDIMAX="$(cat $LOG_EDIPLUG_ESTADO)";
 ## ---------------------------------------------------------------------------------------------------------------------
@@ -61,29 +54,16 @@ declare -r TXT_OUT="$HOY_LOG\t Orden de apagado enviada a RPI2_MEDIA.\t\n"
 ## CÓDIGO ##
 
 ## APAGAR SERVIDOR MULTIMEDIA ##
-## --------------------------------------------------------------------------------------------------------------------
-# Código original
-# OUT=`ssh pi@$RPI2_MEDIA_IP "sudo poweroff"`;
-# wait $!;
-# printf "$HOY_LOG: Orden de apagado enviada a RPI2_MEDIA at $IP_RPI2_MEDIA\n\t$OUT\n" | tee -a $LOG_KODISLEEP
-## ---------------------------------------------------------------------------------------------------------------------
 if [ "$1" == "-r" ] || [ "$1" == "-h" ]; then
 printf "$TXT_OUT" | tee -a $LOG_KODISLEEP
 ssh pi@$IP_RPI2_MEDIA "sudo shutdown $1 $2" &>> $LOG_KODISLEEP
 # sleep $TIEMPO_POWEROFF;
-sleep 5;
+wait $!;
 exit 0;
 fi
 ## ---------------------------------------------------------------------------------------------------------------------
 
 ## COMPROBANDO CONEXIÓN CON EDIPLUG ##
-## --------------------------------------------------------------------------------------------------------------------
-# Este código podría funcionar si la salida no tuviera texto incorporado:
-# [[ "$(ediplug.sh)" == "OFF" ]] && exit 0;
-# Puedo llamar al script sin el punto pero en no se exporta la configuración y tengo que cargarla en 'ediplug.sh'
-# ediplug
-# Si lo llamo con el punto '. ediplug.sh' se exporta la configuración ya cargada en este script
-
 . $HOME/bin/ediplug.sh
 wait $!;
 
@@ -101,27 +81,6 @@ while [ $i -lt $NUM_PINGS ]; do
     i=$[$i+1];
 done
 
-# Después de no conseguir respuesta al ping:
-# Escribo en el log...
-printf "$TXT_KODI_OFF\n" | tee -a "$LOG_KODIOFF";
 
-## APAGO EL ENCHUFE ##
-# ediplug.sh OFF;		# funciona desde la terminal, pero no funciona desde el crontab
-# OUT="$(ediplug.sh OFF)";	# funciona desde la terminal, pero no funciona desde el cron
-# ediplug.sh "OFF";	# funciona desde la terminal, pero no funciona desde el cron
-# OUT=`ediplug.sh OFF`;	# funciona desde la terminal, pero no funciona desde el crontab
-
-# Ahora, con el punto delante si funciona
-# El problema es que me cargaba dos veces la configuración y me aparecían mensajes de error
-# por intentar modificar las constantes del archivo de configuración al llamarlo de nuevo.
-# Lo arreglé con un if en 'bin/ediplug.sh'
-# Ahora lo que carga por duplicado son las constantes de 'ediplug.sh' -> "$TXT_OUT"
-. $HOME/bin/ediplug.sh OFF
-# Exportando el valof 'OFF' para apagar ediplug, tampoco funciona desde el crontab, aunque si directamente de la terminal
-# export VAR_ACCION="OFF"
-# . ediplug.sh
-# Tampoco funciona con eval
-# GO="ediplug.py OFF"
-# eval $GO
-#python ~/python/ediplug-py/src/ediplug/smartplug.py -H $EDIPLUG_IP -l $EDIPLUG_USUARIO -p $EDIPLUG_CLAVE -s OFF
-#printf OFF > $EDIPLUG_ESTADO;
+## APAGO EL ENCHUFE Y ESCRIBO EN EL LOG ##
+. $HOME/bin/ediplug.sh OFF && printf "$TXT_KODI_OFF\n" | tee -a "$LOG_KODIOFF";

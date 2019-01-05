@@ -7,9 +7,9 @@
 # Evita incluir dos veces los scripts de configuración.
 if [[ -z $CONFIGURACION ]]; then
   printf "$CONFIGURACION";
-  bin_conf="$HOME/bin/bin.conf";
-  [[ -f $bin_conf ]] && . $bin_conf
-  printf "Include: $bin_conf\n";
+  config="$HOME/bin/config";
+  [[ -f $config ]] && . $config
+  printf "Include: $config\n";
 fi
 if [[ -z $USUARIOS ]]; then
   printf "$USUARIOS";

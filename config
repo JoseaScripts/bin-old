@@ -1,0 +1,72 @@
+#!/bin/bash
+# ~/bin/bin.conf
+# release v1.0
+
+declare -r CONFIGURACION=True;
+
+# Eliminar comentarios debajo para cargar claves y usuarios desde este archivo
+# declare -r INCLUDE_CLAVES=True;
+# declare -r INCLUDE_USUARIOS=True;
+
+
+# CONFIGURACION
+declare -r HOY_SEMANA=$(date +%V);
+declare -r HOY_DIA=$(date +%d);
+declare -r HOY_MES=$(date +%m);
+declare -r HOY_ANYO=$(date +%Y);
+
+declare -r HOYFECHACOMPLETA=$(date +%Y%m%d);
+declare -r HOY_FECHA_COMPLETA=$(date +%Y-%m-%d);
+
+declare -r HOY_HORA=$(date +%H);
+declare -r HOY_MINUTO=$(date +%M);
+declare -r HOY_SEGUNDO=$(date +%S);
+
+declare -r HOY_LOG=$(date +%F_%H:%M:%S);
+
+# IPs
+declare -r IP_MODEM='192.168.1.1';
+declare -r IP_RPI2_MEDIA='192.168.1.153';
+declare -r IP_EDIPLUG='192.168.1.171';
+declare -r IP_FTP_RESPALDOS="ftp.servage.net";
+
+# MACS
+declare -r MAC_NAS="00:11:32:49:01:67";
+
+# LOGS
+declare -r LOG_KODIOFF="$HOME/logs/kodi/$HOY_ANYO-$HOY_SEMANA.log";
+declare -r LOG_KODI="$HOME/logs/kodi/$HOY_ANYO-$HOY_SEMANA.log";
+declare -r LOG_MODEMOFF="$HOME/logs/router/$HOY_ANYO-$HOY_SEMANA.log";
+declare -r LOG_KODISLEEP="$HOME/logs/KODI_SLEEP.log";
+declare -r LOG_EDIPLUG="$HOME/logs/EDIMAX_STATUS";
+declare -r LOG_EDIPLUG_ESTADO="$HOME/logs/EDIPLUG_STATUS";
+declare -r LOG_ROUTER="$HOME/logs/router/$HOY_ANYO-$HOY_SEMANA.log";
+
+if [[ $INCLUDE_CLAVES ]]; then
+
+declare -r CLAVES=True;
+
+# CLAVES
+declare -r CLAVE01='';
+declare -r CLAVEO1='';
+declare -r CLAVEPC='';
+declare -r CLAVE_LINUX='';
+declare -r CLAVE_SEGURA='';
+declare -r CLAVE_GMAIL='';
+declare -r CLAVE_CORREO='';
+declare -r CLAVE_GIT='';
+declare -r CLAVE_FTP_RESPALDOS='';
+declare -r CLAVE_FTP_RESPALDOS='';
+fi
+
+if [[ $INCLUDE_USUARIOS ]]; then
+
+declare -r USUARIOS=True;
+
+# USUARIOS
+declare -r USUARIO_GMAIL='';
+declare -r USUARIO_GIT='';
+declare -r USUARIO_EDIPLUG='';
+declare -r USUARIO_FTP_RESPALDOS='';
+fi
+

@@ -1,10 +1,10 @@
-#!/bin/sh
-# /home/pi/bin/mega-unrar.sh
-# v1.0
+#!/bin/bash
+# ~/bin/mega-unrar.sh
+# release v1.0
 
 # EJECUCIÓN
 # Se puede llamar directamente al archivo desde cualquier lugar.
-# Tiene una llamada dede el CRONTAB cada 2 horas
+# Tiene una llamada dede el CRONTAB
 
 # FUNCIONES
 # Optimizado para la web: https://www.mega-estrenos.org
@@ -12,64 +12,46 @@
 # a la carpeta /media/descargas/samba donde puedo acceder desde kodi
 # Primero comprueba que la sincronización esté finalizada para que los archivos estén completos.
 
-# CÓDIGO OBSOLETO # -------------------------------------------------------
+# CÓDIGO OBSOLETO PARA OTRO SCRIPT MAS SIMPLE # -------------------------------------------------------
 # find /media/descargas/mega -iname '*.rar' -exec 7z e {} \;
 # -------------------------------------------------------------------------
 
-# OTRAS ACLARACIONES
-# Cadena a buscar en el stdout de 'mega-sync 0' para comprobar que se descargó todo
+# CÓDIGO  -------------------------------------------------------------------
 
-# CÓDIGO RESIDUAL -------------------------------------------------------------------
-synced="Synced";
+## VARIABLES O CONSTANTES
+. $HOME/bin/mega-unrar.conf;
+
+# Muestro fecha y hora para que quede constancia en el log
+printf "TAREA INICIADA HOY: $HOY_LOG\n";
+
+# Compruebo si hay un error en la salida del comando mega-sync 0
+# Código sacado de internet, no lo entiendo del todo.
+# https://unix.stackexchange.com/questions/474177/how-to-redirect-stderr-in-a-variable-but-keep-stdout-in-the-console
 {
-	checksync=$(mega-sync 0 2> /dev/fd/3)
-	error=$(cat<&3)
+    checksync=$(mega-sync 0 2> /dev/fd/3)
+    res=$?; # normalmente la salida de este comando es 0
+    error=$(cat<&3)
 } 3<<EOF
 EOF
 
-# Si da error
+# Si da error...
 if [ -n "$error" ];  then
 	printf "$error\nError de sincronización.\n";
-	exit;
+	exit 0;
 else
-	printf "De momento bien\n"
-fi
-
-if [ "$checksync" = "*Synced*" ]; then
- printf "FUNCIONA\n$checksync\nSincronización finalizada.\n";
-else
- printf "Archivos pendientes de sincronización.\n"
- # exit 0;
+	printf "Comprobación de sincronicación: Sin Errores\n"
 fi
 # -----------------------------------------------------------------------------------
 
+# Compruebo si finalizó la sincronización
+estado_sync=`echo "$checksync" | cut -d" " -f10`
 
-# CÓDIGO ------------------------------------------------------------------
-
-## VARIABLES O CONSTANTES
-. ~/bin/mega-unrar.conf
-
-## VARIABLES O CONSTANTES
-# Fecha
-HOY_LOG=$(date +%F_%H%M%S)
-#declare -r HOY_LOG=$(date +%F_%H:%M:%S);
-
-printf "TAREA INICIADA HOY: $HOY_LOG\n";
-mega-sync 0 | tee $megasync0;
-wait $!;
-
-while read line; do
-  for word in $line; do
-    if [ "$word" = "Synced" ]; then
-      echo "Sincronización con servidor MEGA finalizada.\n";
-      . ~/bin/mega-unrarlist.sh
-      wait $!;
-      rm $megasync0;
-      sudo chmod -R 777 $unrarDir;
-      exit 0;
+    if [[ "$estado_sync" =~ "$synced" ]]; then
+	for carpeta in $unrarDirs; do
+	  . $HOME/bin/mega-unrardir.sh $carpeta
+	  wait $!;
+	  sudo chmod -R 777 $unrarDir
+	done
     else
-      echo ".";
-      sleep 0.2;
+	printf "Sincronización en curso. No se puede ejecutar el programa.\n"
     fi
-  done # for word...
-done < $megasync0

@@ -1,12 +1,7 @@
 #!/bin/bash
+# ~/bin/rpin
 # Control GPIO de Raspberry
-
-## HECHO
-# >> Desactivar todos los pines
-# >> Cambiar valor durante un tiempo determinado
-# >> Opción [0] Salir
-# >> Añadida la opción de retrasar el cambio de pin con la función sleep. Puedo mandar apagar o encender el relay después de x segundos.
-# >> Sustitución de algunos sleep por wait ${!}
+# release v1.0
 
 ## PENDIENTE
 
