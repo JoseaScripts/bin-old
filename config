@@ -70,3 +70,51 @@ declare -r USUARIO_EDIPLUG='';
 declare -r USUARIO_FTP_RESPALDOS='';
 fi
 
+
+if [[ $MEGA_UNRAR ]]; then
+
+declare -r MEGA_UNRAR=True;
+
+# ~/bin/mega-unrar.sh
+# ~/bin/mega-unrardir.sh
+
+## VARIABLES O CONSTANTES
+export synced="Synced";
+# Este es el directorio donde quiero descomprimir los archivos descargados
+export rarDir="/media/descargas/samba/rar/";
+# Directorio para los archivos ya descomprimidos
+export unrarDir="/media/descargas/samba/unrar/";
+# Archivos a descomprimir
+export rarFiles="/media/descargas/mega";
+# Ruta a descargas
+export rarUrl="/media/descargas/mega";
+# Clave para descomprimir archivos
+export rarClave="www.mega-estrenos.com";
+# Carpetas de descarga
+export unrarDirs="josea fatima Marcos Nexus";
+
+fi
+
+if [[ $MEGA_UNRAR ]]; then
+
+declare -r MEGA_UNRAR=True;
+
+# ~/bin/mega-unrar.sh
+# ~/bin/mega-unrardir.sh
+
+## VARIABLES O CONSTANTES
+declare -r synced="Synced";
+# Este es el directorio donde quiero descomprimir los archivos descargados
+declare -r rarDir="/media/descargas/samba/rar/";
+# Directorio para los archivos ya descomprimidos
+declare -r unrarDir="/media/descargas/samba/unrar/";
+# Archivos a descomprimir
+declare -r rarFiles="/media/descargas/mega";
+# Ruta a descargas
+declare -r rarUrl="/media/descargas/mega";
+# Clave para descomprimir archivos
+declare -r rarClave="www.mega-estrenos.com";
+# Carpetas de descarga
+declare -r unrarDirs="josea fatima Marcos Nexus";
+
+fi

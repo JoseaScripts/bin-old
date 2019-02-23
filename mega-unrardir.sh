@@ -17,10 +17,11 @@
 
 ## INCLUDES
 # Evita incluir dos veces los scripts de configuración.
-if [[ -z $rarFiles ]]; then
-  datos="$HOME/bin/mega-unrar.conf";
-  [[ -f $datos ]] && . $datos
-  printf "Include: $datos\n";
+if [[ -z $MEGA_UNRAR ]]; then
+  printf "$MEGA_UNRAR";
+  config="$HOME/bin/mega-urar.conf";
+  [[ -f $config ]] && . $config
+  printf "Include: $config\n";
 else
   printf "Include cargado anteriormente: $datos\n"
 fi
@@ -49,7 +50,7 @@ EOF
             # Si no hay errores:
             if [ -z "$err" ]; then
                 printf "$out\n";
-                mv -vb $rar $unrarDir;
+                mv -vb $rar $rarDir;
 	    # Esta parte parece no funcionar
 	    # Cuando se detecta un error al descomprimir no detiene el script.
             else

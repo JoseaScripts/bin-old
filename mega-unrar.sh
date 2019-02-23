@@ -19,7 +19,12 @@
 # CÓDIGO  -------------------------------------------------------------------
 
 ## VARIABLES O CONSTANTES
-. $HOME/bin/mega-unrar.conf;
+if [[ -z $MEGA_UNRAR ]]; then
+  printf "$MEGA_UNRAR";
+  config="$HOME/bin/mega-unrar.conf";
+  [[ -f $config ]] && . $config
+  printf "Include: $config\n";
+fi
 
 # Muestro fecha y hora para que quede constancia en el log
 printf "TAREA INICIADA HOY: $HOY_LOG\n";
@@ -44,13 +49,15 @@ fi
 # -----------------------------------------------------------------------------------
 
 # Compruebo si finalizó la sincronización
+printf "esto es: \n$checksync";
 estado_sync=`echo "$checksync" | cut -d" " -f10`
-
+echo -e "\nestado_sync: $estado_sync\n";
     if [[ "$estado_sync" =~ "$synced" ]]; then
 	for carpeta in $unrarDirs; do
 	  . $HOME/bin/mega-unrardir.sh $carpeta
 	  wait $!;
 	  sudo chmod -R 777 $unrarDir
+	  sudo chmod -R 777 $rarDir
 	done
     else
 	printf "Sincronización en curso. No se puede ejecutar el programa.\n"
